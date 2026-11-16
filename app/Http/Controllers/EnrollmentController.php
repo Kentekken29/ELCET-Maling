@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEnrollmentRequest;
 use App\Http\Requests\UpdateEnrollmentRequest;
+use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Student;
-use App\Models\Course;
 use App\Services\DomainService;
 
 class EnrollmentController extends Controller
@@ -17,11 +17,10 @@ class EnrollmentController extends Controller
     // 1. Retrieve paginated records with eager-loaded relationships
     public function index()
     {
-        // Eager-loading student, course (and its instructor), and certificate
         $enrollments = Enrollment::with(['student', 'course.instructor', 'certificate'])
-                                ->latest('enrollment_date')
-                                ->paginate(15);
-                                
+            ->latest('enrollment_date')
+            ->paginate(15);
+
         return view('enrollments.index', compact('enrollments'));
     }
 
@@ -30,7 +29,7 @@ class EnrollmentController extends Controller
     {
         return view('enrollments.create', [
             'students' => Student::orderBy('name')->get(),
-            'courses'  => Course::with('instructor')->orderBy('title')->get(),
+            'courses' => Course::with('instructor')->orderBy('title')->get(),
         ]);
     }
 
@@ -38,13 +37,15 @@ class EnrollmentController extends Controller
     public function store(StoreEnrollmentRequest $request)
     {
         $this->service->createEnrollment($request->validated());
+
         return redirect()->route('enrollments.index')->with('success', 'Enrollment created successfully.');
     }
 
     // 4. Validate and delegate data updates to Service class
     public function update(UpdateEnrollmentRequest $request, $id)
     {
-        $this->service->updateEnrollment((int)$id, $request->validated());
+        $this->service->updateEnrollment((int) $id, $request->validated());
+
         return redirect()->route('enrollments.index')->with('success', 'Enrollment updated successfully.');
     }
 }

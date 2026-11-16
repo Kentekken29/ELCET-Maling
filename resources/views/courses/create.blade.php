@@ -29,19 +29,19 @@
                     @error('title') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>
                 <div class="space-y-2">
-                    <label for="instructor_id" class="text-sm font-medium">Instructor</label>
-                    <select id="instructor_id" name="instructor_id" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                        <option value="">Select an instructor</option>
+                    <label for="instructor_name" class="text-sm font-medium">Instructor</label>
+                    <input id="instructor_name" name="instructor_name" list="instructor-options" value="{{ old('instructor_name') }}" required maxlength="150" placeholder="Enter instructor name" class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <datalist id="instructor-options">
                         @foreach ($instructors as $instructor)
-                            <option value="{{ $instructor->id }}" @selected(old('instructor_id') == $instructor->id)>{{ $instructor->name }}</option>
+                            <option value="{{ $instructor->name }}"></option>
                         @endforeach
-                    </select>
-                    @error('instructor_id') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
+                    </datalist>
+                    @error('instructor_name') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>
                 <div class="space-y-2">
                     <label for="fee" class="text-sm font-medium">Course fee</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">$</span>
+                        <span class="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">₱</span>
                         <input id="fee" name="fee" type="number" value="{{ old('fee') }}" required min="0" step="0.01" placeholder="0.00" class="h-10 w-full rounded-md border border-input bg-background py-2 pl-7 pr-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     </div>
                     @error('fee') <p class="text-sm text-destructive">{{ $message }}</p> @enderror

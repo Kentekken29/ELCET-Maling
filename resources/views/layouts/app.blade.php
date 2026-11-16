@@ -60,11 +60,17 @@
 
                 <div class="border-t border-border p-4">
                     <div class="flex items-center gap-3 rounded-md bg-muted p-3">
-                        <span class="flex size-9 items-center justify-center rounded-full bg-background text-xs font-semibold text-muted-foreground">EA</span>
-                        <div class="min-w-0">
-                            <p class="truncate text-sm font-medium">Education Admin</p>
-                            <p class="truncate text-xs text-muted-foreground">Learning workspace</p>
+                        <a href="{{ route('profile.edit') }}" aria-label="Edit profile" class="flex size-9 shrink-0 items-center justify-center rounded-full bg-background text-xs font-semibold text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                        </a>
+                        <div class="min-w-0 flex-1">
+                            <a href="{{ route('profile.edit') }}" class="block truncate text-sm font-medium hover:underline">{{ auth()->user()->name }}</a>
+                            <p class="truncate text-xs text-muted-foreground">{{ auth()->user()->email }}</p>
                         </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Log out</button>
+                        </form>
                     </div>
                 </div>
             </aside>
@@ -80,7 +86,16 @@
                         ELCET Learning
                     </a>
                     <p class="hidden text-sm text-muted-foreground lg:block">Learning management</p>
-                    <span class="flex size-9 items-center justify-center rounded-full border border-border bg-background text-xs font-semibold">EA</span>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Edit profile">
+                            <span class="hidden text-sm font-medium sm:inline">{{ auth()->user()->name }}</span>
+                            <span class="flex size-9 items-center justify-center rounded-full border border-border bg-background text-xs font-semibold">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="lg:hidden">
+                            @csrf
+                            <button type="submit" class="rounded-md border border-input bg-background px-3 py-2 text-xs font-medium shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Log out</button>
+                        </form>
+                    </div>
                 </header>
 
                 <nav class="flex gap-2 overflow-x-auto border-b border-border bg-card px-4 py-2 lg:hidden" aria-label="Mobile navigation">

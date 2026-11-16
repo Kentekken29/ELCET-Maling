@@ -19,24 +19,24 @@
             </div>
             <div class="grid gap-5 sm:grid-cols-2">
                 <div class="space-y-2">
-                    <label for="student_id" class="text-sm font-medium">Student</label>
-                    <select id="student_id" name="student_id" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                        <option value="">Select a student</option>
+                    <label for="student_name" class="text-sm font-medium">Student</label>
+                    <input id="student_name" name="student_name" list="student-options" value="{{ old('student_name') }}" required maxlength="150" placeholder="Type a student name" class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <datalist id="student-options">
                         @foreach ($students as $student)
-                            <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} · {{ $student->email }}</option>
+                            <option value="{{ $student->name }}"></option>
                         @endforeach
-                    </select>
-                    @error('student_id') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
+                    </datalist>
+                    @error('student_name') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>
                 <div class="space-y-2">
-                    <label for="course_id" class="text-sm font-medium">Course</label>
-                    <select id="course_id" name="course_id" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                        <option value="">Select a course</option>
+                    <label for="course_name" class="text-sm font-medium">Course</label>
+                    <input id="course_name" name="course_name" list="course-options" value="{{ old('course_name') }}" required maxlength="150" placeholder="Type a course name" class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <datalist id="course-options">
                         @foreach ($courses as $course)
-                            <option value="{{ $course->id }}" @selected(old('course_id') == $course->id)>{{ $course->code }} · {{ $course->title }}</option>
+                            <option value="{{ $course->title }}"></option>
                         @endforeach
-                    </select>
-                    @error('course_id') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
+                    </datalist>
+                    @error('course_name') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>
                 <div class="space-y-2">
                     <label for="enrollment_date" class="text-sm font-medium">Enrollment date</label>
@@ -46,7 +46,7 @@
                 <div class="space-y-2">
                     <label for="discount_applied" class="text-sm font-medium">Discount applied</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">$</span>
+                        <span class="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">₱</span>
                         <input id="discount_applied" name="discount_applied" type="number" value="{{ old('discount_applied', '0.00') }}" min="0" step="0.01" class="h-10 w-full rounded-md border border-input bg-background py-2 pl-7 pr-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     </div>
                     @error('discount_applied') <p class="text-sm text-destructive">{{ $message }}</p> @enderror

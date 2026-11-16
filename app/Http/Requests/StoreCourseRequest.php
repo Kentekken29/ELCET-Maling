@@ -16,10 +16,11 @@ class StoreCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code'          => ['required', 'string', 'max:20', 'unique:courses,code'],
-            'title'         => ['required', 'string', 'max:150'],
-            'instructor_id' => ['required', 'exists:instructors,id'],
-            'fee'           => ['required', 'numeric', 'min:0'],
+            'code' => ['required', 'string', 'max:20', 'unique:courses,code'],
+            'title' => ['required', 'string', 'max:150'],
+            'instructor_name' => ['required', 'string', 'max:150'],
+            'instructor_id' => ['nullable', 'exists:instructors,id'],
+            'fee' => ['required', 'numeric', 'min:0'],
         ];
     }
 
@@ -27,9 +28,11 @@ class StoreCourseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'code.unique'          => 'This course code already exists in the system.',
+            'code.unique' => 'This course code already exists in the system.',
+            'instructor_name.required' => 'The instructor name is required.',
+            'instructor_name.string' => 'The instructor name must be valid text.',
             'instructor_id.exists' => 'The selected instructor does not exist.',
-            'fee.numeric'          => 'The course fee must be a valid number.',
+            'fee.numeric' => 'The course fee must be a valid number.',
         ];
     }
 }
