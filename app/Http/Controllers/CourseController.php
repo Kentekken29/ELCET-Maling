@@ -16,7 +16,7 @@ class CourseController extends Controller
     // 1. Retrieve paginated records with eager-loaded relationships
     public function index()
     {
-        $courses = Course::with('instructor')
+        $courses = Course::with('instructor') // sala  need further optimzation
                         ->withCount('enrollments')
                         ->paginate(15);
                         
@@ -26,7 +26,7 @@ class CourseController extends Controller
     // 2. Return creation interface or required dependency data
     public function create()
     {
-        $instructors = Instructor::orderBy('name')->get();
+        $instructors = Instructor::orderBy('name')->get(); // sala  need further optimzation
         return view('courses.create', compact('instructors'));
     }
 

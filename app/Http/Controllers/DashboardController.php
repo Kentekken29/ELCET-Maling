@@ -16,7 +16,7 @@ class DashboardController extends Controller
             'students' => Student::count(),
             'enrollments' => Enrollment::count(),
         ];
-        $recentEnrollments = Enrollment::with(['student', 'course'])
+        $recentEnrollments = Enrollment::with(['student', 'course']) // sala  need further optimzation
             ->latest('enrollment_date')
             ->limit(5)
             ->get();

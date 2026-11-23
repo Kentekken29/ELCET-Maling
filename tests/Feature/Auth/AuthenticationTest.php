@@ -39,6 +39,10 @@ class AuthenticationTest extends TestCase
             'name' => 'Taylor Learner',
             'email' => 'taylor@example.com',
         ]);
+        $this->assertDatabaseHas('students', [
+            'name' => 'Taylor Learner',
+            'email' => 'taylor@example.com',
+        ]);
     }
 
     public function test_registration_rejects_an_existing_email(): void

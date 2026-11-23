@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,6 +41,24 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): RedirectResponse
     {
         $user = User::create($request->safe()->only(['name', 'email', 'password']));
+        $student = Student::query()
+            ->whereRaw('LOWER(name) = ?', [strtolower($user->name)])
+            ->orWhere('email', $user->email)
+            ->first();
+
+        if ($student) {
+            $student->update([
+                'name' => $user->name,
+                'email' => $user->email,
+                'user_id' => $user->id,
+            ]);
+        } else {
+            Student::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'user_id' => $user->id,
+            ]);
+        }
 
         Auth::login($user);
         $request->session()->regenerate();

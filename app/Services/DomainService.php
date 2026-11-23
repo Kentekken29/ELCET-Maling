@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Instructor;
 use App\Models\Student;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -116,6 +117,28 @@ class DomainService
 
         if ($cleanName === '') {
             throw new \InvalidArgumentException('Student name is required.');
+        }
+
+        $user = Auth::user();
+        if ($user && Str::lower($cleanName) === Str::lower($user->name)) {
+            $student = Student::query()
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (! $student) {
+                $student = Student::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'user_id' => $user->id,
+                ]);
+            } else {
+                $student->update([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ]);
+            }
+
+            return $student->id;
         }
 
         $student = Student::query()

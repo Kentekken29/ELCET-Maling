@@ -96,6 +96,86 @@ class ExampleTest extends TestCase
         ]);
     }
 
+    public function test_course_fee_cannot_exceed_100000(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $instructor = Instructor::create(['name' => 'John Doe']);
+        $course = Course::create([
+            'code' => 'WEB-101',
+            'title' => 'Introduction to Web Design',
+            'instructor_id' => $instructor->id,
+            'fee' => 1000,
+        ]);
+
+        $response = $this->patch(route('courses.update', $course), [
+            'fee' => '100000.01',
+        ]);
+
+        $response->assertSessionHasErrors([
+            'fee' => 'The course fee cannot exceed ₱100,000.00.',
+        ]);
+        $this->assertDatabaseHas('courses', [
+            'id' => $course->id,
+            'fee' => '1000.00',
+        ]);
+    }
+
+    public function test_repeated_instructor_name_is_reported_as_existing(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $instructor = Instructor::create(['name' => 'John Doe']);
+        Course::create([
+            'code' => 'WEB-101',
+            'title' => 'Introduction to Web Design',
+            'instructor_id' => $instructor->id,
+            'fee' => 1500,
+        ]);
+
+        $response = $this->from(route('courses.create'))->post(route('courses.store'), [
+            'code' => 'WEB-101',
+            'title' => 'Advanced Web Design',
+            'instructor_name' => 'john doe',
+            'fee' => '1500',
+        ]);
+
+        $response->assertRedirect(route('courses.create'));
+        $response->assertSessionHasErrors([
+            'instructor_name' => 'This instructor already exists in the system.',
+        ]);
+        $response->assertSessionDoesntHaveErrors(['code']);
+        $this->assertDatabaseCount('instructors', 1);
+        $this->assertDatabaseCount('courses', 1);
+    }
+
+    public function test_duplicate_course_code_can_create_another_course(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $instructor = Instructor::create(['name' => 'Sarah Lee']);
+        Course::create([
+            'code' => 'WEB-101',
+            'title' => 'Introduction to Web Design',
+            'instructor_id' => $instructor->id,
+            'fee' => 1500,
+        ]);
+
+        $response = $this->post(route('courses.store'), [
+            'code' => 'web-101',
+            'title' => 'Another Web Course',
+            'instructor_name' => 'Mike Chen',
+            'fee' => '1500',
+        ]);
+
+        $response->assertRedirect(route('courses.index'));
+        $this->assertDatabaseCount('courses', 2);
+        $this->assertDatabaseHas('courses', [
+            'code' => 'WEB-101',
+            'title' => 'Another Web Course',
+        ]);
+    }
+
     public function test_course_catalog_has_inline_fee_edit_controls(): void
     {
         $this->actingAs(User::factory()->create());
@@ -146,7 +226,7 @@ class ExampleTest extends TestCase
         ]);
     }
 
-    public function test_enrollment_net_fee_cannot_exceed_its_course_fee(): void
+    public function test_enrollment_net_fee_cannot_exceed_100000(): void
     {
         $this->actingAs(User::factory()->create());
 
@@ -167,11 +247,11 @@ class ExampleTest extends TestCase
         ]);
 
         $response = $this->patch(route('enrollments.update', $enrollment), [
-            'net_amount_paid' => '1500.01',
+            'net_amount_paid' => '100000.01',
         ]);
 
         $response->assertSessionHasErrors([
-            'net_amount_paid' => 'The net fee cannot exceed the course fee.',
+            'net_amount_paid' => 'The net fee cannot exceed ₱100,000.00.',
         ]);
         $this->assertDatabaseHas('enrollments', [
             'id' => $enrollment->id,
@@ -247,7 +327,7 @@ class ExampleTest extends TestCase
         $response = $this->post(route('enrollments.store'), [
             'student_name' => 'Jane Doe',
             'course_name' => 'Web Design Basics',
-            'enrollment_date' => '2026-11-16',
+            'enrollment_date' => '2030-12-31',
             'discount_applied' => '0.00',
             'completion_percentage' => '25',
         ]);
@@ -259,6 +339,46 @@ class ExampleTest extends TestCase
             'student_id' => 1,
             'course_id' => 1,
             'completion_percentage' => 25,
+        ]);
+    }
+
+    public function test_enrollment_create_form_allows_any_date(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->get(route('enrollments.create'))
+            ->assertOk()
+            ->assertSee('name="enrollment_date" type="date"', false);
+    }
+
+    public function test_enrollment_date_can_be_updated_to_a_future_date(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $instructor = Instructor::create(['name' => 'John Doe']);
+        $student = Student::create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
+        $course = Course::create([
+            'code' => 'WEB-101',
+            'title' => 'Introduction to Web Design',
+            'instructor_id' => $instructor->id,
+            'fee' => 1500,
+        ]);
+        $enrollment = Enrollment::create([
+            'student_id' => $student->id,
+            'course_id' => $course->id,
+            'enrollment_date' => '2026-11-16',
+            'discount_applied' => 100,
+            'completion_percentage' => 0,
+        ]);
+
+        $response = $this->patch(route('enrollments.update', $enrollment), [
+            'enrollment_date' => '2030-12-31',
+        ]);
+
+        $response->assertRedirect(route('enrollments.index'));
+        $this->assertDatabaseHas('enrollments', [
+            'id' => $enrollment->id,
+            'enrollment_date' => '2030-12-31 00:00:00',
         ]);
     }
 }

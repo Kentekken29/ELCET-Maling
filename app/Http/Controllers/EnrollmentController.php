@@ -17,7 +17,7 @@ class EnrollmentController extends Controller
     // 1. Retrieve paginated records with eager-loaded relationships
     public function index()
     {
-        $enrollments = Enrollment::with(['student', 'course.instructor', 'certificate'])
+        $enrollments = Enrollment::with(['student', 'course.instructor', 'certificate']) // sala  need further optimzation
             ->latest('enrollment_date')
             ->paginate(15);
 

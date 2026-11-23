@@ -42,7 +42,7 @@
                     <label for="fee" class="text-sm font-medium">Course fee</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">₱</span>
-                        <input id="fee" name="fee" type="number" value="{{ old('fee') }}" required min="0" step="0.01" placeholder="0.00" class="h-10 w-full rounded-md border border-input bg-background py-2 pl-7 pr-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <input id="fee" name="fee" type="number" value="{{ old('fee') }}" required min="0" max="100000" step="0.01" placeholder="0.00" class="h-10 w-full rounded-md border border-input bg-background py-2 pl-7 pr-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     </div>
                     @error('fee') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>

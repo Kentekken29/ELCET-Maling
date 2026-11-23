@@ -40,7 +40,7 @@
                 </div>
                 <div class="space-y-2">
                     <label for="enrollment_date" class="text-sm font-medium">Enrollment date</label>
-                    <input id="enrollment_date" name="enrollment_date" type="date" value="{{ old('enrollment_date', now()->toDateString()) }}" max="{{ now()->toDateString() }}" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <input id="enrollment_date" name="enrollment_date" type="date" value="{{ old('enrollment_date', now()->toDateString()) }}" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     @error('enrollment_date') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                 </div>
                 <div class="space-y-2">
